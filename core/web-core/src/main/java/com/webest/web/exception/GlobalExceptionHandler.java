@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -77,8 +78,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
         MissingRequestHeaderException.class,
         MissingServletRequestParameterException.class,
-        MethodArgumentTypeMismatchException.class}
-    )
+        MethodArgumentTypeMismatchException.class
+    })
     public ResponseEntity<? extends CommonResponse<?>> handleRequestHeaderMissing(
         Exception exception) {
 
@@ -88,7 +89,10 @@ public class GlobalExceptionHandler {
                 "잘못된 입력 데이터 입니다.", exception.getMessage()));
     }
 
-    @ExceptionHandler(NoResourceFoundException.class)
+    @ExceptionHandler({
+        NoResourceFoundException.class, 
+        HttpRequestMethodNotSupportedException.class
+    })
     public ResponseEntity<? extends CommonResponse<?>> handleNoResourceFoundException(
         NoResourceFoundException exception
     ) {

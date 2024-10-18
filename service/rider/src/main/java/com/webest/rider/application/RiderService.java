@@ -13,18 +13,23 @@ public interface RiderService {
     /**
      * 라이더 생성
      */
-    public Long createRider(RiderCreateRequestDto requestDto);
+    public String createRider(RiderCreateRequestDto requestDto);
 
     /**
      * 라이더에 주소 Code 리스트 등록
      */
-    public RiderResponseDto registerAddressToRider(Long riderId,
+    public RiderResponseDto registerAddressToRider(String userId,
         RiderRegisterAddressRequestDto requestDto);
 
     /**
      * 라이더 단일 조회
      */
-    public RiderResponseDto findRiderById(Long riderId);
+    public RiderResponseDto findByUserId(String userId);
+
+    /**
+     * 라이더 단일 조회
+     */
+    public RiderResponseDto findRiderById(Long userId);
 
     /**
      * 라이더 목록 조회
@@ -40,7 +45,7 @@ public interface RiderService {
     /**
      * 라이더 정보 업데이트
      */
-    public RiderResponseDto updateRiderById(Long riderId, RiderUpdateRequestDto requestDto);
+    public RiderResponseDto updateRiderById(String userId, RiderUpdateRequestDto requestDto);
 
     /**
      * 라이더 삭제

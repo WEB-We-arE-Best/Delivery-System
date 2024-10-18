@@ -94,11 +94,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         AuthDto userDetails = authService.getUserDetailsByUserId(userName);
 
         // 엑세스 토큰 생성 및 header 추가 , 만료시간 10분
-        String accessToken = jwtTokenService.createToken(userDetails,Long.parseLong(accessTokenTime));
+        String accessToken = jwtTokenService.createToken(userDetails.userId(), userDetails.role(),
+            Long.parseLong(accessTokenTime));
         response.addHeader("Authorization", "Bearer " + accessToken);
 
         // 리프레시 토큰 생성 및 redis 저장 , 만료시간 1시간
-        String refreshToken = jwtTokenService.createToken(userDetails,Long.parseLong(accessTokenTime)*6);
+        String refreshToken = jwtTokenService.createToken(userDetails.userId(), userDetails.role(),
+            Long.parseLong(accessTokenTime) * 6);
         RefreshTokenDto refreshTokenDto = new RefreshTokenDto(userDetails.userId(),refreshToken, TokenStatus.ACTIVE);
         redisUtil.setDataRefreshToken(refreshTokenDto);
     }

@@ -12,6 +12,9 @@ public enum RiderErrorCode {
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 입니다."),
     INVALID_PHONE_NUMBER_INPUT(HttpStatus.BAD_REQUEST, "잘못된 휴대전화 입력입니다."),
 
+    EXIST_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "이미 존재하는 휴대전화입니다."),
+    EXIST_USER_ID(HttpStatus.BAD_REQUEST, "이미 존재하는 유저아이디 입니다."),
+
 
     // 404
     RIDER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 라이더 정보입니다."),

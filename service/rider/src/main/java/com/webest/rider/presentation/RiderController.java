@@ -8,6 +8,8 @@ import com.webest.rider.presentation.dtos.request.RiderCreateRequestDto;
 import com.webest.rider.presentation.dtos.request.RiderRegisterAddressRequestDto;
 import com.webest.rider.presentation.dtos.request.RiderUpdateRequestDto;
 import com.webest.rider.presentation.dtos.response.RiderResponseDto;
+import com.webest.web.common.CommonStaticVariable;
+import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,10 +41,10 @@ public class RiderController {
      * 라이더 생성
      */
     @PostMapping
-    public CommonResponse<Long> createRider(
+    public CommonResponse<String> createRider(
         @Validated @RequestBody RiderCreateRequestDto requestDto
     ) {
-        Long riderId = riderService.createRider(requestDto);
+        String riderId = riderService.createRider(requestDto);
 
         return CommonResponse.success(riderId);
     }
@@ -51,7 +54,7 @@ public class RiderController {
      */
     @PutMapping("/{id}/address")
     public CommonResponse<RiderResponseDto> registerAddressToRider(
-        @PathVariable("id") Long riderId,
+        @PathVariable("id") String riderId,
         @RequestBody RiderRegisterAddressRequestDto requestDto
     ) {
         RiderResponseDto riderResponseDto = riderService.registerAddressToRider(riderId,
@@ -65,17 +68,29 @@ public class RiderController {
      */
     @GetMapping("/{id}")
     public CommonResponse<RiderResponseDto> findRiderById(
+        @PathVariable("id") String userId
+    ) {
+
+        RiderResponseDto riderById = riderService.findByUserId(userId);
+        return CommonResponse.success(riderById);
+    }
+
+    /**
+     * 라이더 ID로 조회 (마스터만 가능)
+     */
+    @GetMapping("/id/{id}")
+    public CommonResponse<RiderResponseDto> findRiderById(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @PathVariable("id") Long id
     ) {
 
         RiderResponseDto riderById = riderService.findRiderById(id);
-
         return CommonResponse.success(riderById);
     }
 
 
     /**
-     * 라이더 검색
+     * 라이더 검색 (마스터만 가능)
      */
     @GetMapping
     public CommonResponse<Page<RiderResponseDto>> findRiderList(
@@ -93,16 +108,16 @@ public class RiderController {
      */
     @PatchMapping("/{id}")
     public CommonResponse<?> updateRiderById(
-        @PathVariable("id") Long id,
+        @PathVariable("id") String userId,
         @Validated @RequestBody RiderUpdateRequestDto requestDto
     ) {
-        RiderResponseDto riderResponseDto = riderService.updateRiderById(id, requestDto);
+        RiderResponseDto riderResponseDto = riderService.updateRiderById(userId, requestDto);
 
         return CommonResponse.success(riderResponseDto);
     }
 
     /**
-     * 라이더 삭제
+     * 라이더 삭제(삭제는 DB ID로 진행한다) ,(마스터만 진행)
      */
     @DeleteMapping("/{id}")
     public CommonResponse<Long> deleteRiderById(
@@ -112,6 +127,10 @@ public class RiderController {
 
         return CommonResponse.success(deletedId);
     }
+
+    /* ================================================================================
+      Exception Handler
+     ================================================================================*/
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<? extends CommonResponse<?>> IllegalArgumentExceptionHandler(
