@@ -3,13 +3,17 @@ package com.webest.user.application.service;
 import com.webest.app.address.csv.ReadAddressCsv;
 import com.webest.app.address.service.AddressDto;
 import com.webest.user.domain.model.User;
+import com.webest.user.domain.model.vo.OrderProductDto;
+import com.webest.user.domain.model.vo.ShoppingCartDto;
 import com.webest.user.domain.model.vo.UserDto;
 import com.webest.user.domain.repository.UserRepository;
 import com.webest.user.exception.UserErrorCode;
 import com.webest.user.exception.UserException;
 import com.webest.user.infrastructure.geocode.GoogleMapResponse;
+import com.webest.user.infrastructure.redis.RedisUtil;
 import com.webest.user.presentation.dto.request.UserJoinRequest;
 import com.webest.user.presentation.dto.request.UserUpdateRequest;
+import com.webest.user.presentation.dto.response.OrderProductResponse;
 import com.webest.user.presentation.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ReadAddressCsv readAddressCsv;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RedisUtil redisUtil;
 
     @Value("${google.map.key}")
     private Object API_KEY;// 실제 서버에서 구동할때는 무조건 환경변수에 숨겨야함 절대 노출되면 안됨!!!
@@ -136,6 +141,14 @@ public class UserServiceImpl implements UserService {
     public void delete(Long userId,String xUserId) {
         findByUserId(xUserId);
         userRepository.delete(userId);
+    }
+
+    // 장바구니 출력
+    @Override
+    public OrderProductResponse getCart(String userId) {
+        ShoppingCartDto dto = redisUtil.getShoppingCart(userId);
+        OrderProductResponse response = new OrderProductResponse(dto.storeId(),dto.product());
+        return response;
     }
 
     // 유저 전부 출력 (관리자 기능)
