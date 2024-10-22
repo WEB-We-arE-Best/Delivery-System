@@ -1,8 +1,10 @@
 package com.webest.user.presentation.controller;
 
 import com.webest.user.application.service.UserService;
+import com.webest.user.domain.model.vo.ShoppingCartDto;
 import com.webest.user.presentation.dto.request.UserJoinRequest;
 import com.webest.user.presentation.dto.request.UserUpdateRequest;
+import com.webest.user.presentation.dto.response.OrderProductResponse;
 import com.webest.user.presentation.dto.response.UserResponse;
 import com.webest.web.response.CommonResponse;
 import jakarta.validation.Valid;
@@ -62,4 +64,10 @@ public class UserController {
         return CommonResponse.success(userId + "의 유저가 삭제되었습니다");
     }
 
+    // 장바구니 조회
+    @GetMapping("/cart")
+    public CommonResponse<OrderProductResponse> getUserCart(
+            @RequestHeader("X-UserId") String userId){
+        return CommonResponse.success(userService.getCart(userId));
+    }
 }

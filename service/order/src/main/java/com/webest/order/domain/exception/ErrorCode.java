@@ -18,7 +18,13 @@ public enum ErrorCode {
 
 
     // ORDER_PRODUCT 관련 에러
-    ORDER_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문상품을 찾을 수 없습니다.");
+    ORDER_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문상품을 찾을 수 없습니다."),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 상점에서 찾을 수 없는 상품입니다."),
+
+    // COUPON 관련 에러
+    COUPON_ALREADY_USED_EXCEPTION(HttpStatus.CONFLICT, "이미 사용된 쿠폰입니다.");
+
+
 
     private HttpStatus status;
     private String message;

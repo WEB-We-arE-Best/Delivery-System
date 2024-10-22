@@ -1,6 +1,7 @@
 package com.webest.delivery.presentation.controller;
 
 import com.webest.delivery.application.service.DeliveryService;
+import com.webest.delivery.domain.model.DeliveryStatus;
 import com.webest.delivery.presentation.reqeust.DeliveryCreateRequest;
 import com.webest.delivery.presentation.reqeust.DeliverySearchRequest;
 import com.webest.delivery.presentation.reqeust.DeliveryUpdateRequest;
@@ -69,14 +70,35 @@ public class DeliveryController {
     @GetMapping("/search")
     public CommonResponse<?> searchDeliveries(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                               @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
-                                              @RequestBody DeliverySearchRequest searchRequest,
+                                              @RequestParam(required = false) Long orderId,
+                                              @RequestParam(required = false) String riderId,
+                                              @RequestParam(required = false) String requestsToRider,
+                                              @RequestParam(required = false) DeliveryStatus deliveryStatus,
+                                              @RequestParam(required = false) Long storeAddressCode,
+                                              @RequestParam(required = false) String storeDetailAddress,
+                                              @RequestParam(required = false) Long arrivalAddressCode,
+                                              @RequestParam(required = false) String arrivalDetailAddress,
+                                              @RequestParam(required = false) Double deliveryFeeAmount,
                                               @RequestParam(defaultValue = "1") int page,
                                               @RequestParam(defaultValue = "20") int size) {
 
         PageRequest pageRequest = PageRequest.of(page - 1, size);
 
+        DeliverySearchRequest searchRequest = new DeliverySearchRequest(
+                orderId,
+                riderId,
+                requestsToRider,
+                deliveryStatus,
+                storeAddressCode,
+                storeDetailAddress,
+                arrivalAddressCode,
+                arrivalDetailAddress,
+                deliveryFeeAmount
+        );
+
         return CommonResponse.success(deliveryService.searchDeliveries(userId, userRole, searchRequest.toDto(), pageRequest));
     }
+
 
 
     // 배차
@@ -116,6 +138,17 @@ public class DeliveryController {
                                  @PathVariable(name = "deliveryId") Long deliveryId) {
 
         return CommonResponse.success(deliveryService.cancelDelivery(userId, userRole, deliveryId));
+    }
+
+    // 취소
+    @PostMapping("/{deliveryId}/rollback")
+    public CommonResponse<?> rollbackDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
+                                            @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
+                                            @PathVariable(name = "deliveryId") Long deliveryId) {
+
+        deliveryService.rollbackUndispatchedDeliveries();
+
+        return CommonResponse.success(null);
     }
 
 

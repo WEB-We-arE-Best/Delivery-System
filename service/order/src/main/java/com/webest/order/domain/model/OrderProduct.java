@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "order_products")
+@Table(name = "p_order_product")
 public class OrderProduct extends BaseEntity {
 
     @Id
@@ -33,6 +33,8 @@ public class OrderProduct extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
+
+
 
     public static OrderProduct create(Long productId,
                                       Integer quantity,

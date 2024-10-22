@@ -13,8 +13,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -199,6 +201,32 @@ public class DeliveryService {
         }).orElseThrow(() -> new DeliveryException(ErrorCode.DELIVERY_NOT_FOUND));
     }
 
+
+    /**
+     * 30분 내로 배차가 되지 않은 배달 롤백 처리
+     */
+    @Transactional
+    @Scheduled(fixedRate = 60000) // 1분마다 스케줄 실행
+    public void rollbackUndispatchedDeliveries() {
+
+        LocalDateTime thirtyMinutesAgo = LocalDateTime.now().minusMinutes(30);
+
+        // 배차되지 않은 배달 찾기 (배달 상태가 REQUEST이고, 30분이 경과한 경우)
+        List<Delivery> undispatchedDeliveries = deliveryRepository.findByDeliveryStatusAndCreatedAtBefore(
+                DeliveryStatus.REQUEST, thirtyMinutesAgo);
+
+        undispatchedDeliveries.forEach(delivery -> {
+
+            // 배달 롤백
+            delivery.cancel();
+
+            // 롤백 이벤트 발행
+            deliveryEventService.publishDeliveryRollbackEvent(delivery.rollbackEvent());
+
+            // 배달 상태 저장
+            deliveryRepository.save(delivery);
+        });
+    }
 
 
 }

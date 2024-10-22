@@ -45,6 +45,10 @@ public class DeliveryEventService {
         kafkaTemplate.send(DeliveryTopic.COMPLETED.getTopic(), EventSerializer.serialize(event));
     }
 
+    // 롤백 이벤트 발행
+    public void publishDeliveryRollbackEvent(DeliveryRollbackEvent event) {
+        kafkaTemplate.send(DeliveryTopic.ROLLBACK.getTopic(), EventSerializer.serialize(event));
+    }
 
 
 }

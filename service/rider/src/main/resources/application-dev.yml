@@ -33,3 +33,8 @@ springdoc:
     path: /rider-service/v3/api-docs
   swagger-ui:
     path: /rider-service/swagger-ui.html
+
+log:
+  logstash:
+    host: ${LOG_STASH_HOST}
+    port: ${LOG_STASH_PORT}

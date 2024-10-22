@@ -49,10 +49,10 @@ class CouponUserServiceImplTest {
             return couponService.createCoupon(new CouponCreateRequestDto(
                 "치킨 할인 쿠폰",
                 1,
-                DateType.DAY,
+                DateType.DAY.toString(),
                 LocalDate.parse("2024-10-01"),
                 LocalDate.parse("2024-10-10"),
-                DiscountType.FIXED,
+                DiscountType.FIXED.toString(),
                 3000,
                 maxQuantity
             ));

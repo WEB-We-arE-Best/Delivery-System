@@ -14,6 +14,10 @@ public final class CouponStaticValue {
     public static final String COUPON_REDIS_WAITING_KEY = "waiting-list:coupon";
     public static final String COUPON_REDIS_STATUS_KEY = "open-check:coupon:";
     /**
+     * 로깅 이름
+     */
+    public final static String LOGGING_SERVICE_NAME = "coupon-service";
+    /**
      * 쿠폰 비율 할인 최대 값
      */
     public static Integer PERCENTAGE_MAX_VALUE = 90;

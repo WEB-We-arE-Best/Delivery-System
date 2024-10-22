@@ -17,8 +17,8 @@ spring:
         highlight_sql: true # SQL 문 색 부여
   #        use_sql_comments: true # 콘솔에 표시되는 쿼리문 위에 어떤 실행을 하려는지 HINT 표시
 
-  redis:
-    data:
+  data:
+    redis:
       host: ${DEV_REDIS_HOST}
       port: 6379
       username: ${DEV_REDIS_USERNAME}

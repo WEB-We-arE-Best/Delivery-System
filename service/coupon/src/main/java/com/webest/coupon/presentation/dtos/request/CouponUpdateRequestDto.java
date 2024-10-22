@@ -2,6 +2,7 @@ package com.webest.coupon.presentation.dtos.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.webest.coupon.domain.model.DateType;
+import com.webest.web.validator.EnumValidation;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -15,6 +16,7 @@ public record CouponUpdateRequestDto(
     @Positive
     Integer duration,
 
+    @EnumValidation(target = DateType.class)
     @NotNull
     DateType dateType,
 

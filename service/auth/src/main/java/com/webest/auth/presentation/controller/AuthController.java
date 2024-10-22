@@ -2,11 +2,13 @@ package com.webest.auth.presentation.controller;
 
 import com.webest.auth.application.AuthService;
 import com.webest.auth.application.KakaoService;
+import com.webest.auth.application.RiderAuthService;
 import com.webest.auth.infrastructure.email.MailSendService;
 import com.webest.auth.infrastructure.email.dto.EmailCheckDto;
 import com.webest.auth.infrastructure.email.dto.EmailRequest;
 import com.webest.auth.presentation.dto.request.RefreshRequest;
-import com.webest.auth.presentation.dto.request.RiderCreateRequestDto;
+import com.webest.auth.presentation.dto.request.rider.RiderAuthRequestDto;
+import com.webest.auth.presentation.dto.request.rider.RiderCreateRequestDto;
 import com.webest.auth.presentation.dto.request.UserJoinRequest;
 import com.webest.auth.presentation.dto.response.JoinResponse;
 import com.webest.web.response.CommonResponse;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final RiderAuthService riderAuthService;
     private final MailSendService mailService;
     private final KakaoService kakaoService;
 
@@ -42,10 +45,23 @@ public class AuthController {
 
     // 라이더 회원 가입
     @PostMapping("/riderSignUp")
-    public CommonResponse<Long> createRider(@RequestBody @Valid RiderCreateRequestDto requestDto) {
-        Long riderId = authService.createRider(requestDto);
+    public CommonResponse<String> createRider(
+        @RequestBody @Valid RiderCreateRequestDto requestDto) {
+        String riderId = authService.createRider(requestDto);
 
         return CommonResponse.success(riderId);
+    }
+
+    @PostMapping("/rider-login")
+    public CommonResponse<String> authRider(
+        @RequestBody @Valid RiderAuthRequestDto requestDto,
+        HttpServletResponse response
+    ) {
+
+        String accessToken = riderAuthService.riderAuth(requestDto);
+        response.addHeader("Authorization", "Bearer " + accessToken);
+
+        return CommonResponse.success(accessToken);
     }
 
     @PostMapping ("/mailSend")

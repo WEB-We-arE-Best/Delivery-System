@@ -28,7 +28,9 @@ public record UserDto(
                 this.userName,
                 this.email,
                 this.addressCode,
-                this.detailAddress
+                this.detailAddress,
+                this.latitude,
+                this.longitude
         );
     }
 

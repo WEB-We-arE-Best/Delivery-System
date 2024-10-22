@@ -10,7 +10,8 @@ public enum DeliveryTopic {
     DISPATCHED("delivery-dispatched"),
     DEPARTED("delivery-departed"),
     COMPLETED("delivery-completed"),
-    CANCELED("delivery-canceled");
+    CANCELED("delivery-canceled"),
+    ROLLBACK("delivery-rollback");
 
 
     private final String topic;

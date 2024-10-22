@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 public enum CouponErrorCode {
     // 400
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력입니다."),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다."),
     NOT_OWNED_COUPON(HttpStatus.BAD_REQUEST, "쿠폰을 소유하고 있지 않습니다"),
 
     /**
@@ -19,7 +20,8 @@ public enum CouponErrorCode {
     CHECK_UNDER_ZERO(HttpStatus.BAD_REQUEST, "기간과 발급 최대 수량은 0 이상이어야 합니다.."),
 
     // 403
-    FORBIDDEN_INPUT(HttpStatus.FORBIDDEN, "권한이 부족합니다."),
+    NOT_ADMIN(HttpStatus.FORBIDDEN, "권한이 없습니다.."),
+    NOT_SELF_USER(HttpStatus.FORBIDDEN, "자기 자신의 쿠폰만 조회 가능합니다."),
 
 
     // 404

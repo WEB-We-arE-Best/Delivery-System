@@ -1,4 +1,6 @@
 spring:
+  # config:
+  #   import: optional:file:.env.local[.properties]
   application:
     name: coupon-service
   datasource:
@@ -40,3 +42,15 @@ springdoc:
     path: /coupon-service/v3/api-docs
   swagger-ui:
     path: /coupon-service/swagger-ui.html
+
+log:
+  logstash:
+    host: ${LOG_STASH_HOST}
+    port: ${LOG_STASH_PORT}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus"
+

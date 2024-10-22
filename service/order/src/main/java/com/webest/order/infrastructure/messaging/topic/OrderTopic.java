@@ -13,7 +13,8 @@ public enum OrderTopic {
     PREPARING("order-preparing"),
     COMPLETED("order-completed"),
     REQUEST("order-requested"),
-    DELETED("order-deleted");
+    DELETED("order-deleted"),
+    ROLLBACK("order-rollback");
 
     private final String topic;
 

@@ -15,16 +15,14 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         HttpStatus status = HttpStatus.valueOf(response.status());
 
-        switch (status) {
-            case BAD_REQUEST:
-            case NOT_FOUND:
-                return new CouponException(CouponErrorCode.INVALID_INPUT);
-            case INTERNAL_SERVER_ERROR: // todo: 이 부분 외부 노출 고민
-                return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+        return switch (status) {
+            case BAD_REQUEST -> new CouponException(CouponErrorCode.INVALID_INPUT);
+            case NOT_FOUND -> new CouponException(CouponErrorCode.USER_NOT_FOUND);
+            case INTERNAL_SERVER_ERROR -> // todo: 이 부분 외부 노출 고민
+                new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "서버 오류가 발생했습니다.");
-            default:
-                return defaultErrorDecoder.decode(methodKey, response);
-        }
+            default -> defaultErrorDecoder.decode(methodKey, response);
+        };
     }
 }
 

@@ -33,7 +33,7 @@ eureka:
 
 google:
   map:
-    key: ${GOOGLE_API_KEY}
+    key: AIzaSyA43sMl6VkhJEWoLv_qv6PpDnoU8RGv2aY
 
 springdoc:
   api-docs:

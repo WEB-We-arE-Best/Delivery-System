@@ -1,4 +1,4 @@
-package com.webest.auth.presentation.dto.request;
+package com.webest.auth.presentation.dto.request.rider;
 
 import com.webest.auth.domain.model.RiderTransportation;
 import jakarta.validation.constraints.NotBlank;

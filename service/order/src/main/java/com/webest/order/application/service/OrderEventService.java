@@ -54,6 +54,11 @@ public class OrderEventService {
         kafkaTemplate.send(OrderTopic.DELETED.getTopic(), EventSerializer.serialize(event));
     }
 
+    // 주문 롤백시 발생하는 이벤트
+    public void publishOrderRollbackEvent(OrderRollbackEvent event) {
+        kafkaTemplate.send(OrderTopic.ROLLBACK.getTopic(), EventSerializer.serialize(event));
+    }
+
 
 
 

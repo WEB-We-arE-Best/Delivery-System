@@ -5,6 +5,7 @@ import com.webest.rider.common.exception.RiderErrorCode;
 import com.webest.rider.common.exception.RiderException;
 import com.webest.rider.domain.model.Rider;
 import com.webest.rider.domain.model.RiderSearchCondition;
+import com.webest.rider.domain.model.RiderTransportation;
 import com.webest.rider.domain.model.vo.PhoneNumber;
 import com.webest.rider.domain.repository.RiderQueryRepository;
 import com.webest.rider.domain.repository.RiderRepository;
@@ -38,7 +39,10 @@ public class RiderServiceImpl implements RiderService {
      */
     @Transactional
     @Override
-    public Long createRider(RiderCreateRequestDto requestDto) {
+    public String createRider(RiderCreateRequestDto requestDto) {
+
+        // userId 중복인지 확인
+        checkDupUserId(requestDto.userId());
 
         // 휴대전화 중복 확인
         checkDupPhoneNumber(requestDto.phoneNumber());
@@ -46,10 +50,10 @@ public class RiderServiceImpl implements RiderService {
         // 라이더 생성
         Rider rider = Rider.createRider(requestDto.userId(),
             passwordEncoder.encode(requestDto.password()),
-            requestDto.phoneNumber(), requestDto.transportation());
+            requestDto.phoneNumber(), RiderTransportation.valueOf(requestDto.transportation()));
         Rider riderInfo = riderRepository.save(rider);
 
-        return riderInfo.getRiderId();
+        return riderInfo.getUserId();
     }
 
     /**
@@ -58,6 +62,12 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public RiderResponseDto findRiderById(Long riderId) {
         Rider riderByIdAndCheck = findRiderByIdAndCheck(riderId);
+        return RiderResponseDto.from(riderByIdAndCheck);
+    }
+
+    @Override
+    public RiderResponseDto findByUserId(String userId) {
+        Rider riderByIdAndCheck = findRiderByUserIdAndCheck(userId);
         return RiderResponseDto.from(riderByIdAndCheck);
     }
 
@@ -94,10 +104,10 @@ public class RiderServiceImpl implements RiderService {
      */
     @Transactional
     @Override
-    public RiderResponseDto registerAddressToRider(Long riderId,
+    public RiderResponseDto registerAddressToRider(String riderId,
         RiderRegisterAddressRequestDto requestDto) {
 
-        Rider rider = findRiderByIdAndCheck(riderId);
+        Rider rider = findRiderByUserIdAndCheck(riderId);
 
         // Address code가 존재하는 지 확인
         requestDto.addressCodeList().forEach(
@@ -118,10 +128,10 @@ public class RiderServiceImpl implements RiderService {
      */
     @Transactional
     @Override
-    public RiderResponseDto updateRiderById(Long riderId, RiderUpdateRequestDto requestDto) {
+    public RiderResponseDto updateRiderById(String userId, RiderUpdateRequestDto requestDto) {
 
-        Rider rider = findRiderByIdAndCheck(riderId);
-        rider.updateRiderInfo(requestDto.transportation());
+        Rider rider = findRiderByUserIdAndCheck(userId);
+        rider.updateRiderInfo(RiderTransportation.valueOf(requestDto.transportation()));
 
         return RiderResponseDto.from(rider);
     }
@@ -131,9 +141,9 @@ public class RiderServiceImpl implements RiderService {
      */
     @Transactional
     @Override
-    public Long deleteRiderById(Long riderId) {
+    public Long deleteRiderById(Long id) {
 
-        Rider rider = findRiderByIdAndCheck(riderId);
+        Rider rider = findRiderByIdAndCheck(id);
         rider.deleteRider();
 
         return rider.getRiderId();
@@ -162,16 +172,24 @@ public class RiderServiceImpl implements RiderService {
                 () -> new RiderException(RiderErrorCode.RIDER_NOT_FOUND));
     }
 
+    private void checkDupUserId(String userId) {
+        riderRepository.findByUserId(userId).ifPresent(
+            rider -> {
+                throw new RiderException(RiderErrorCode.EXIST_USER_ID);
+            }
+        );
+    }
+
     /**
      * 이미 존재하는 휴대전화 번호인지 확인한다.
      */
     private void checkDupPhoneNumber(String phoneNumber) {
         // 휴대폰 중복 확인
         boolean riderPhoneCheck = riderRepository.existsByPhone(new PhoneNumber(phoneNumber));
-        
+
         if (riderPhoneCheck) {
             throw new RiderException(
-                RiderErrorCode.INVALID_PHONE_NUMBER_INPUT
+                RiderErrorCode.EXIST_PHONE_NUMBER
             );
         }
     }

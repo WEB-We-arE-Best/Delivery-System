@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "delivery_records")
+@Table(name = "p_delivery_record")
 public class DeliveryRecord extends BaseEntity {
 
     @Id

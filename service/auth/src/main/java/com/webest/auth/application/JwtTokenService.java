@@ -1,6 +1,7 @@
 package com.webest.auth.application;
 
 import com.webest.auth.domain.model.vo.AuthDto;
+import com.webest.web.common.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -29,14 +30,14 @@ public class JwtTokenService {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
 
-    public String createToken(AuthDto dto, Long tokenTime){
+    public String createToken(String userId, UserRole role, Long tokenTime){
 
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         Key key = Keys.hmacShaKeyFor(bytes);
 
-        Claims claims = Jwts.claims().setSubject(String.valueOf(dto.userId()));
-        claims.put("userId", dto.userId());
-        claims.put("role", dto.role());
+        Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
+        claims.put("userId", userId);
+        claims.put("role", role);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenTime);

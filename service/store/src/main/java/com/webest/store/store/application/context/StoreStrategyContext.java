@@ -23,11 +23,20 @@ public class StoreStrategyContext {
                 .getDeliveryStores(userId);
     }
 
-    public List<StoreResponse> getTakeOutStores(String userId, UserRole role) {
+
+    public List<StoreResponse> searchDeliveryStores(String userId, UserRole role, Long categoryId, String keyword) {
         return storeStrategies.stream()
                 .filter(storeStrategy -> storeStrategy.checkUserRole(role))
                 .findAny()
                 .orElseThrow(() -> new StoreException(StoreErrorCode.UNAUTHORIZED_ACCESS))
-                .getTakeOutStores(userId);
+                .searchDeliveryStores(userId, keyword, categoryId);
+    }
+
+    public List<StoreResponse> getTakeOutStores(String userId, UserRole role, Double radius) {
+        return storeStrategies.stream()
+                .filter(storeStrategy -> storeStrategy.checkUserRole(role))
+                .findAny()
+                .orElseThrow(() -> new StoreException(StoreErrorCode.UNAUTHORIZED_ACCESS))
+                .getTakeOutStores(userId, radius);
     }
 }

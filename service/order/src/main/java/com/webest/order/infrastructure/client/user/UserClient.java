@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(
         name = "user-service",
+        url = "http://127.0.0.1:19092",
         configuration = UserFeignClientConfig.class,
         fallbackFactory = UserFallbackFactory.class
 )

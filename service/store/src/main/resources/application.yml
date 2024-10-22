@@ -6,14 +6,14 @@ spring:
     name: store-service
 
   datasource:
-    url:
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true # sql 로깅
@@ -35,8 +35,8 @@ eureka:
 
 
 naver:
-  client-id:
-  client-secret:
+  client-id: om679kuuum
+  client-secret: DYTewOBesTI0M7YxHANwbKAWHTVNfgqK2jcOmell
 
 springdoc:
   api-docs:

@@ -96,6 +96,14 @@ public class FilterConfig {
                         new AuthorizationHeaderFilter.Config())))  // 필터 팩토리로 필터 생성
                 .uri("lb://COUPON-SERVICE"))
 
+            .route("user-get-all-route", r -> r.path("/api/v1/riders/city/**")
+                .and()
+                .method("GET")
+                .filters(f -> f
+                    .removeRequestHeader("Cookie")
+                    )  // 필터 팩토리로 필터 생성
+                .uri("lb://RIDER-SERVICE"))
+
             .route("user-get-all-route", r -> r.path("/api/v1/riders/**", "/rider-service/v3/api-docs")
                 .and()
                 .method("GET", "POST", "PATCH", "PUT", "DELETE")

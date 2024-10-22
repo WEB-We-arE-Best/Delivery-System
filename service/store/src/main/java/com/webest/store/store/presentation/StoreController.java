@@ -5,6 +5,7 @@ import com.webest.store.store.presentation.dto.*;
 import com.webest.store.store.application.StoreService;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class StoreController {
     // 가게 생성
     @PostMapping
     public CommonResponse<StoreResponse> saveStore(
-            @RequestBody CreateStoreRequest request,
+            @Valid @RequestBody CreateStoreRequest request,
             @RequestHeader("X-UserId") String userId,
             @RequestHeader("X-Role") String role
             ) {
@@ -33,7 +34,7 @@ public class StoreController {
     // 가게 주소 등록
     @PutMapping("/address")
     public CommonResponse<StoreResponse> updateStoreAddress(
-            @RequestBody UpdateStoreAddressRequest request,
+            @Valid @RequestBody UpdateStoreAddressRequest request,
             @RequestHeader("X-UserId") String userId,
             @RequestHeader("X-Role") String role
     ) {
@@ -71,18 +72,33 @@ public class StoreController {
         return CommonResponse.success(responses);
     }
 
+    // 배달 가게 가게이름으로 검색
+    @GetMapping("/search")
+    public CommonResponse<List<StoreResponse>> searchDeliveryStores(
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role,
+            @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam(value = "keyword", required = false) String keyword
+
+    ) {
+        // String을 UserRole로 변환
+        UserRole userRole = UserRole.valueOf(role);
+        List<StoreResponse> responses = storeStrategyContext.searchDeliveryStores(userId, userRole, categoryId, keyword);
+        return CommonResponse.success(responses);
+    }
+
     // 포장 가게 목록 조회 (MASTER - 전체 / OWNER & USER - REDIS GEO로 반경내 가게만 조회)
-//    @GetMapping("/take-out/{radius}")
-//    public CommonResponse<List<StoreResponse>> getTakeOutStores(
-//            @RequestHeader("X-UserId") String userId,
-//            @RequestHeader("X-Role") String role,
-//            @PathVariable("radius") Double radius
-//    ) {
-//        // String을 UserRole로 변환
-//        UserRole userRole = UserRole.valueOf(role);
-//
-//
-//    }
+    @GetMapping("/take-out/{radius}")
+    public CommonResponse<List<StoreResponse>> getTakeOutStores(
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role,
+            @PathVariable("radius") Double radius
+    ) {
+        // String을 UserRole로 변환
+        UserRole userRole = UserRole.valueOf(role);
+        List<StoreResponse> responses = storeStrategyContext.getTakeOutStores(userId, userRole, radius);
+        return CommonResponse.success(responses);
+    }
 
     @GetMapping("/user")
     public CommonResponse<List<StoreResponse>> getStoresByUserAddressCode(

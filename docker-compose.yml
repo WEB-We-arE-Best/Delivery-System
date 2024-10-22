@@ -73,49 +73,49 @@ services:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
 
-  store-service:
-    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/store
-    build: ./service/store/.
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - "19093:19093"
-    environment:
-      - DB_URL=${DB_URL}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
-      - DEV_REDIS_HOST=${DEV_REDIS_HOST}
-      - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
-      - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
-      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
-      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
-    networks:
-      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
-    restart: always
-
-  order-service:
-    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/order
-    build: ./service/order/.
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - "19094:19094"
-    environment:
-      - DB_URL=${DB_URL}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
-      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
-      - MONGO_DB_HOST=${MONGO_DB_HOST}
-      - MONGO_DB_PORT=${MONGO_DB_PORT}
-      - MONGO_DB_USERNAME=${MONGO_DB_USERNAME}
-      - MONGO_DB_PASSWORD=${MONGO_DB_PASSWORD}
-      - MONGO_DB_DATABASE=${MONGO_DB_DATABASE}
-      - MONGO_DB_URI=${MONGO_DB_URI}
-    networks:
-      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
-    restart: always
+#  store-service:
+#    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/store
+#    build: ./service/store/.
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#    ports:
+#      - "19093:19093"
+#    environment:
+#      - DB_URL=${DB_URL}
+#      - DB_USERNAME=${DB_USERNAME}
+#      - DB_PASSWORD=${DB_PASSWORD}
+#      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+#      - DEV_REDIS_HOST=${DEV_REDIS_HOST}
+#      - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
+#      - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
+#      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+#      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+#    networks:
+#      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+#    restart: always
+#
+#  order-service:
+#    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/order
+#    build: ./service/order/.
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#    ports:
+#      - "19094:19094"
+#    environment:
+#      - DB_URL=${DB_URL}
+#      - DB_USERNAME=${DB_USERNAME}
+#      - DB_PASSWORD=${DB_PASSWORD}
+#      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+#      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+#      - MONGO_DB_HOST=${MONGO_DB_HOST}
+#      - MONGO_DB_PORT=${MONGO_DB_PORT}
+#      - MONGO_DB_USERNAME=${MONGO_DB_USERNAME}
+#      - MONGO_DB_PASSWORD=${MONGO_DB_PASSWORD}
+#      - MONGO_DB_DATABASE=${MONGO_DB_DATABASE}
+#      - MONGO_DB_URI=${MONGO_DB_URI}
+#    networks:
+#      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+#    restart: always
 
   coupon-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/coupon
@@ -133,6 +133,8 @@ services:
       - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
       - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
       - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - LOG_STASH_HOST=${LOG_STASH_HOST}
+      - LOG_STASH_PORT=${LOG_STASH_PORT}
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
@@ -149,6 +151,8 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - LOG_STASH_HOST=${LOG_STASH_HOST}
+      - LOG_STASH_PORT=${LOG_STASH_PORT}
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always

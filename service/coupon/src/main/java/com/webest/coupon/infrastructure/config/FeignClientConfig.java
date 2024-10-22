@@ -13,5 +13,10 @@ public class FeignClientConfig {
         return new CustomFeignErrorDecoder();
     }
 
+//    @Bean
+//    public RequestInterceptor feignClientInterceptor() {
+//        return new FeignClientInterceptor();
+//    }
+
 }
 

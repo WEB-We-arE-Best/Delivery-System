@@ -38,11 +38,11 @@ public class OrderEventConsumer {
         orderQueryService.preparing(orderPreparingEvent.getId());
     }
 
-    @KafkaListener(topics = "order-requested", groupId = "order-query-group")
-    public void handleOrderRequestedEvent(String message) {
-        OrderRequestedEvent orderRequestedEvent = EventSerializer.deserialize(message, OrderRequestedEvent.class);
-        orderQueryService.requestOrder(orderRequestedEvent.getId());
-    }
+//    @KafkaListener(topics = "order-requested", groupId = "order-query-group")
+//    public void handleOrderRequestedEvent(String message) {
+//        OrderRequestedEvent orderRequestedEvent = EventSerializer.deserialize(message, OrderRequestedEvent.class);
+//        orderQueryService.requestOrder(orderRequestedEvent.getId());
+//    }
 
     @KafkaListener(topics = "order-deleted", groupId = "order-query-group")
     public void handleOrderDeletedEvent(String message) {

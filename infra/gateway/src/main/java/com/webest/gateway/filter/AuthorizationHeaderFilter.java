@@ -8,38 +8,36 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.Base64;
-import java.util.Date;
-
 @Component
 @Slf4j
-public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
-
-    @Value("${token.secret-key}")
-    private String secretKey;
+public class AuthorizationHeaderFilter extends
+    AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
 
     private final RedisUtil redisUtil;
+    @Value("${token.secret-key}")
+    private String secretKey;
 
 
     public AuthorizationHeaderFilter(RedisUtil redisUtil) {
         super(Config.class);
         this.redisUtil = redisUtil;
-    }
-
-    public static class Config{
-
     }
 
     @Override
@@ -57,7 +55,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             ServerHttpRequest request = exchange.getRequest();
 
             // Header에 AUTHORIZATION에 관련된 값이 있는지 확인
-            if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
+            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return onError(exchange, "no authorization header", HttpStatus.UNAUTHORIZED);
             }
 
@@ -74,19 +72,26 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             // access 토큰 만료 시간 검사
             Date expiration = claims.getExpiration();
-            if(expiration.before(new Date())){
-                return onError(exchange, "토큰 시간 만료, RefreshToken을 같이 보내주세요", HttpStatus.UNAUTHORIZED);
+            if (expiration.before(new Date())) {
+                return onError(exchange, "토큰 시간 만료, RefreshToken을 같이 보내주세요",
+                    HttpStatus.UNAUTHORIZED);
             }
 
             // Redis에 저장되어 있는 토큰 값 가져옴
-            RefreshTokenDto dto = redisUtil.getRefreshToken(claims.get("userId").toString());
+            RefreshTokenDto dto;
+            try {
+                dto = redisUtil.getRefreshToken(claims.get("userId").toString());
+            } catch (Exception e) {
+                return onError(exchange, "Redis에서 값을 갖고 올 때 문제 발생",
+                    HttpStatus.UNAUTHORIZED);
+            }
 
             // 현재 토큰의 상태가 비활성화 일경우(로그아웃 상태)
-            if(dto.status() == TokenStatus.DEACTIVATE){
+            if (dto == null || dto.status() == TokenStatus.DEACTIVATE) {
                 return onError(exchange, "로그아웃 된 계정입니다 재로그인 해주세요", HttpStatus.UNAUTHORIZED);
             }
 
-            if(!validateToken(claims,exchange)){
+            if (!validateToken(claims, exchange)) {
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 
@@ -110,9 +115,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 //            SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(secretKeyBytes)
-                .build()
-                .parseClaimsJws(token);
+            .setSigningKey(secretKeyBytes)
+            .build()
+            .parseClaimsJws(token);
 
         return claimsJws.getBody();
     }
@@ -124,12 +129,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             log.info("#####payload :: " + claims.toString());
 
-
             // 요청 헤더 수정 (Userid,role 추가)
             exchange.getRequest().mutate()
-                    .header("X-UserId", claims.get("userId").toString())
-                    .header("X-Role", claims.get("role").toString())
-                    .build();
+                .header("X-UserId", claims.get("userId").toString())
+                .header("X-Role", claims.get("role").toString())
+                .build();
             // 추가적인 검증 로직 (예: 토큰 만료 여부 확인 등)을 여기에 추가할 수 있습니다.
             return true;
         } catch (Exception e) {
@@ -137,13 +141,28 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         }
     }
 
-
     // Mono, Flux -> Spring WebFlux
-    private Mono<Void> onError(ServerWebExchange exchange, String message, HttpStatus httpStatus){
+    private Mono<Void> onError(ServerWebExchange exchange, String message, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
 
+        // Content-Type 설정
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+        // Body에 추가할 문자열 생성
+        String jsonResponse = String.format("{\"error\": \"%s\"}", message);
+
+        // DataBuffer에 JSON 문자열 담기
+        DataBuffer buffer = response.bufferFactory()
+            .wrap(jsonResponse.getBytes(StandardCharsets.UTF_8));
+
         log.error(message);
-        return response.setComplete();
+
+        // 응답에 Body 쓰기
+        return response.writeWith(Mono.just(buffer));
+    }
+
+    public static class Config {
+
     }
 }

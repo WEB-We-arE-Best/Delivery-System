@@ -22,6 +22,6 @@ public class UserFallback implements UserClient {
             log.error("Not found error");
         }
         log.error("Failed to get user {}", userId);
-        return new CommonResponse<UserResponse>(404, "유저 데이터를 가져오지 못했습니다.", null);
+        return new CommonResponse<>(404, "유저 데이터를 가져오지 못했습니다.", null);
     }
 }

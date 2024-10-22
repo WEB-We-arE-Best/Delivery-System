@@ -27,6 +27,15 @@ dependencies {
     // kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
+    // # Logback <-> Logstash 연동을 위함
+    implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // prometheus (https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus)
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
     // 테스트 카프카
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 

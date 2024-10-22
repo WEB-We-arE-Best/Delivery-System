@@ -6,10 +6,10 @@ spring:
     name: order-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://localhost:3306/userdb
+    username: root
+    password: Jesuslove1!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 
   data:
@@ -25,7 +25,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 

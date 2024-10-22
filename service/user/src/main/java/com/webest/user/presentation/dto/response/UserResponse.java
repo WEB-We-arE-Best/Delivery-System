@@ -8,6 +8,8 @@ public record UserResponse(
         String userName,
         String email,
         Long addressCode,
-        String detailAddress
+        String detailAddress,
+        double latitude,
+        double longitude
 ) {
 }

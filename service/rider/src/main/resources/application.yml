@@ -2,14 +2,10 @@ server:
   port: 19099
 
 spring:
+  # config:
+  #   import: optional:file:.env.local[.properties]
   application:
     name: rider-service
-    datasource:
-      url: jdbc:mysql://localhost:3310/userdb
-      username: master
-      password: 1234
-      driver-class-name: com.mysql.cj.jdbc.Driver
-
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -17,14 +13,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true # sql 로깅
-        format_sql: true # SQL 문 정렬하여 출력
-        highlight_sql: true # SQL 문 색 부여
-  #        use_sql_comments: true # 콘솔에 표시되는 쿼리문 위에 어떤 실행을 하려는지 HINT 표시
-
+      ddl-auto: update
+#    properties:
+#      hibernate:
+#        show_sql: true # sql 로깅
+#        format_sql: true # SQL 문 정렬하여 출력
+#        highlight_sql: true # SQL 문 색 부여
+#        use_sql_comments: true # 콘솔에 표시되는
 
 eureka:
   client:
@@ -37,3 +32,10 @@ springdoc:
     path: /rider-service/v3/api-docs
   swagger-ui:
     path: /rider-service/swagger-ui.html
+
+log:
+  logstash:
+    host: ${LOG_STASH_HOST}
+    port: ${LOG_STASH_PORT}
+
+

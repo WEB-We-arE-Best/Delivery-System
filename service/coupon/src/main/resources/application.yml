@@ -1,6 +1,6 @@
 spring:
-  config:
-    import: optional:file:./service/coupon/.env[.properties]
+  # config:
+  #   import: optional:file:.env.local[.properties]
   application:
     name: coupon-service
   datasource:
@@ -8,15 +8,16 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   data:
     redis:
-      host: ${DEV_REDIS_HOST}
+      host: localhost
       port: 6379
-      username: ${DEV_REDIS_USERNAME}
-      password: ${DEV_REDIS_PASSWORD}
+      username: default
+      password: systempass
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   #    properties:
   #      hibernate:
   #        show_sql: true # sql 로깅
@@ -24,7 +25,7 @@ spring:
   #        highlight_sql: true # SQL 문 색 부여
   #        use_sql_comments: true # 콘솔에 표시되는 쿼리문 위에 어떤 실행을 하려는지 HINT 표시
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: localhost:9092
 
 server:
   port: 19097
@@ -32,7 +33,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL}
+      defaultZone: http://localhost:19090/eureka/
 
 springdoc:
   api-docs:
@@ -40,3 +41,15 @@ springdoc:
     path: /coupon-service/v3/api-docs
   swagger-ui:
     path: /coupon-service/swagger-ui.html
+
+log:
+  logstash:
+    host: ${LOG_STASH_HOST}
+    port: ${LOG_STASH_PORT}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus"
+

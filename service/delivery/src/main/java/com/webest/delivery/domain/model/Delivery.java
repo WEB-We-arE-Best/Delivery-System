@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "deliveries")
+@Table(name = "p_delivery")
 public class Delivery extends BaseEntity {
 
     @Id
@@ -185,6 +185,13 @@ public class Delivery extends BaseEntity {
                 this.arrivalAddressCode,
                 this.arrivalDetailAddress,
                 this.deliveryFeeAmount);
+    }
+
+    public DeliveryRollbackEvent rollbackEvent() {
+        return new DeliveryRollbackEvent(
+                this.id,
+                this.orderId,
+                "요청한지 30분 지났음");
     }
 
 

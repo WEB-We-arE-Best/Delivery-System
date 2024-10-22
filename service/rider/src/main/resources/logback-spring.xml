@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="30 seconds">
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="CONSOLE">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %X{service} [%thread] %-5level %logger{36} - %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <!-- 콘솔에 로그 출력 형식 지정 -->
+  <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender" name="LOGSTASH">
+    <destination>${logstashHost}:${logstashPort}</destination>
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <logLevel/>
+        <loggerName/>
+        <mdc/>
+        <message/>
+        <stackTrace/>
+        <threadName/>
+        <timestamp>
+          <timeZone>UTC</timeZone>
+        </timestamp>
+      </providers>
+    </encoder>
+
+    <param name="Encoding" value="UTF-8"/>
+  </appender>
+  <springProfile name="dev">
+    <root level="WARN">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="LOGSTASH"/>
+    </root>
+  </springProfile>
+
+  <!-- Logstash로 로그 전송 -->
+  <springProfile name="!dev">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="LOGSTASH"/>
+    </root>
+  </springProfile>
+
+  <springProperty defaultValue="127.0.0.1" name="logstashHost" source="log.logstash.host"/>
+  <springProperty defaultValue="50000" name="logstashPort" source="log.logstash.port"/>
+
+</configuration>

@@ -3,6 +3,7 @@ package com.webest.coupon.presentation.dtos.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.webest.coupon.domain.model.DateType;
 import com.webest.coupon.domain.model.DiscountType;
+import com.webest.web.validator.EnumValidation;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
@@ -15,8 +16,9 @@ public record CouponCreateRequestDto(
     @Positive
     Integer duration,
 
+    @EnumValidation(target = DateType.class)
     @NotNull
-    DateType dateType,
+    String dateType,
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -26,8 +28,9 @@ public record CouponCreateRequestDto(
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate endTime,
 
+    @EnumValidation(target = DiscountType.class)
     @NotNull
-    DiscountType discountType,
+    String discountType,
     @NotNull
     @Positive
     Integer discountValue,
@@ -36,5 +39,6 @@ public record CouponCreateRequestDto(
     @Positive
     Integer maxQuantity
 ) {
+
 
 }

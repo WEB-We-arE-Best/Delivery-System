@@ -76,8 +76,7 @@ public class DeliveryRepositoryImpl implements DeliveryCustomRepository {
                 .offset(pageable.getOffset())  // 페이징 처리
                 .limit(pageable.getPageSize()); // 페이징 처리
 
-        long total = query.fetch().size();  // 전체 검색 결과 수
-
+        long total = query.fetchCount();  // 전체 검색 결과 수
         List<Delivery> results = query.fetch();  // 실제 검색 결과 목록
 
         return new PageImpl<>(results, pageable, total);

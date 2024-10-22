@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Entity
 @SQLDelete(sql = "UPDATE p_store SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
-@Table(name = "orders")
+@Table(name = "p_order")
 public class Order extends BaseEntity {
 
 
@@ -98,27 +98,16 @@ public class Order extends BaseEntity {
         order.isRequest = isRequest;
         order.requestsToStore = requestsToStore;
         order.requestsToRider = requestsToRider;
-
         order.arrivalAddressCode = arrivalAddressCode;
-
         order.arrivalDetailAddress = arrivalDetailAddress;
-
         order.storeAddressCode = storeAddressCode;
-
         order.storeDetailAddress = storeDetailAddress;
-
         order.totalQuantity = calculateTotalQuantity(orderProducts);
-
         order.totalProductPrice = calculateTotalProductPrice(orderProducts);
-
         order.couponAppliedAmount = couponAppliedAmount;
-
         order.deliveryTipAmount = deliveryTipAmount;
-
         order.totalPaymentPrice = calculateTotalPaymentPrice(order.totalProductPrice, couponAppliedAmount, deliveryTipAmount);
-
         order.orderProducts = orderProducts;
-
         orderProducts.forEach(orderProduct -> orderProduct.setOrder(order));
 
         return order;
@@ -338,6 +327,29 @@ public class Order extends BaseEntity {
     public OrderDeletedEvent deletedEvent() {
         this.isDeleted = true;
         return new OrderDeletedEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
+    }
+
+    public OrderRollbackEvent rollbackEvent() {
+        this.orderStatus = OrderStatus.PREPARING;
+        return new OrderRollbackEvent(
                 this.id,
                 this.storeId,
                 this.paymentId,

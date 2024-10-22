@@ -5,10 +5,9 @@ import com.webest.store.category.presentation.dto.CategoryResponse;
 import com.webest.store.category.presentation.dto.CreateCategoryRequest;
 import com.webest.store.category.presentation.dto.UpdateCategoryRequest;
 import com.webest.store.category.application.CategoryService;
-import com.webest.store.store.exception.StoreErrorCode;
-import com.webest.store.store.exception.StoreException;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ public class CategoryController {
     @PostMapping
     @RoleCheck(requiredRole = UserRole.MASTER)
     public CommonResponse<CategoryResponse> saveCategory(
-            @RequestBody CreateCategoryRequest createCategoryRequest
+            @Valid @RequestBody CreateCategoryRequest createCategoryRequest
     ) {
          CategoryResponse categoryResponse = categoryService.saveCategory(createCategoryRequest);
         return CommonResponse.success(categoryResponse);
@@ -49,7 +48,7 @@ public class CategoryController {
     @PutMapping
     @RoleCheck(requiredRole = UserRole.MASTER)
     public CommonResponse<CategoryResponse> updateCategory(
-            @RequestBody UpdateCategoryRequest updateCategoryRequest
+            @Valid @RequestBody UpdateCategoryRequest updateCategoryRequest
     ) {
         CategoryResponse categoryResponse = categoryService.updateCategoryValue(updateCategoryRequest);
         return CommonResponse.success(categoryResponse);
