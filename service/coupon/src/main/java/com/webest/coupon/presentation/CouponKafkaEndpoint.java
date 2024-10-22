@@ -46,8 +46,8 @@ public class CouponKafkaEndpoint {
 
         try {
             //TODO: 테스트 용 현재 Production 예정이 없으므로 남겨둔다. 추후 배포시 삭제
-            Thread.sleep(1000 * 2);
-            log.info("처리 완료 : {}", data);
+            // Thread.sleep(100);
+//            log.info("처리 완료 : {}", data);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

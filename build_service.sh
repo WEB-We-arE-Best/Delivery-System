@@ -27,9 +27,9 @@ else
     "auth"
     "coupon"
     "store"
-#    "order"
-#    "delivery"
-#    "rider"
+    "order"
+    "delivery"
+    "rider"
   )
 fi
 
