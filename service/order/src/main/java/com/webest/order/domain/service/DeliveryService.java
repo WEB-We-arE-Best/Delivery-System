@@ -14,8 +14,8 @@ public class DeliveryService {
 
     private final DeliveryClient deliveryClient;
 
-    public void createDelivery(String userId, UserRole userRole, DeliveryCreateRequest deliveryCreateRequest) {
-        deliveryClient.createDelivery(userId, userRole, deliveryCreateRequest);
+    public DeliveryResponse createDelivery(String userId, UserRole userRole, DeliveryCreateRequest deliveryCreateRequest) {
+        return deliveryClient.createDelivery(userId, userRole, deliveryCreateRequest).getData();
     }
 
 }
