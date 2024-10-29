@@ -89,6 +89,7 @@ public class OrderService {
 
         Order order = Order.create(
                 request.storeId(),
+                null,
                 request.paymentId(),
                 request.couponId(),
                 userId,
@@ -171,6 +172,7 @@ public class OrderService {
         return orderRepository.findById(orderId).map(order -> {
             order.update(
                     request.storeId(),
+                    null,
                     request.paymentId(),
                     request.couponId(),
                     userId,

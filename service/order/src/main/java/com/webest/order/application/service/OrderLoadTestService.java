@@ -1,11 +1,15 @@
 package com.webest.order.application.service;
 
 import com.webest.order.application.dtos.OrderDto;
+import com.webest.order.domain.exception.ErrorCode;
+import com.webest.order.domain.exception.OrderException;
 import com.webest.order.domain.model.Order;
 import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.repository.order.OrderRepository;
 import com.webest.order.domain.service.DeliveryService;
 import com.webest.order.infrastructure.client.delivery.dto.DeliveryCreateRequest;
+import com.webest.order.infrastructure.client.delivery.dto.DeliveryResponse;
+import com.webest.order.infrastructure.messaging.consumer.DeliveryEventConsumer;
 import com.webest.order.infrastructure.messaging.events.DeliveryStatus;
 import com.webest.order.presentation.response.OrderResponse;
 import com.webest.web.common.UserRole;
@@ -26,6 +30,8 @@ public class OrderLoadTestService {
     private final DeliveryService deliveryService;
 
     private final OrderEventService orderEventService;
+    
+    private final DeliveryEventConsumer deliveryEventConsumer;
 
 
     // 카프카 이벤트 발생이 아니라 feignClient로 요청을 보내서 측정
@@ -39,6 +45,7 @@ public class OrderLoadTestService {
 
         Order order = Order.create(
                 request.storeId(),
+                null,
                 request.paymentId(),
                 request.couponId(),
                 userId,
@@ -74,8 +81,13 @@ public class OrderLoadTestService {
                 null
         );
 
-        deliveryService.createDelivery(userId, userRole, deliveryCreateRequest);
+        DeliveryResponse deliveryResponse =  deliveryService.createDelivery(userId, userRole, deliveryCreateRequest);
 
+        orderRepository.findById(order.getId()).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+
+        order.setDeliveryId(deliveryResponse.id());
+
+        orderRepository.save(order);
 
         return OrderResponse.of(order);
     }
@@ -90,6 +102,7 @@ public class OrderLoadTestService {
 
         Order order = Order.create(
                 request.storeId(),
+                null,
                 request.paymentId(),
                 request.couponId(),
                 userId,
@@ -112,9 +125,9 @@ public class OrderLoadTestService {
         // 주문 저장
         orderRepository.save(order);
 
-
         // 주문 생성시 이벤트 발생
         orderEventService.publishOrderRequestEvent(order.requestedEvent());
+
 
         return OrderResponse.of(order);
     }

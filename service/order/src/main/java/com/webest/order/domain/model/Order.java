@@ -31,6 +31,8 @@ public class Order extends BaseEntity {
 
     private Long storeId;
 
+    private Long deliveryId;
+
     private Long paymentId;
 
     private Long couponId;
@@ -70,6 +72,7 @@ public class Order extends BaseEntity {
     private List<OrderProduct> orderProducts;
 
     public static Order create(Long storeId,
+                               Long deliveryId,
                                Long paymentId,
                                Long couponId,
                                String userId,
@@ -91,6 +94,7 @@ public class Order extends BaseEntity {
 
         Order order = new Order();
         order.storeId = storeId;
+        order.deliveryId = deliveryId;
         order.paymentId = paymentId;
         order.couponId = couponId;
         order.userId = userId;
@@ -114,6 +118,7 @@ public class Order extends BaseEntity {
     }
 
     public void update(Long storeId,
+                       Long deliveryId,
                        Long paymentId,
                        Long couponId,
                        String userId,
@@ -131,6 +136,7 @@ public class Order extends BaseEntity {
                        Double deliveryTipAmount,
                        Double totalPaymentPrice) {
         this.storeId = storeId;
+        this.deliveryId = deliveryId;
         this.paymentId = paymentId;
         this.couponId = couponId;
         this.userId = userId;
