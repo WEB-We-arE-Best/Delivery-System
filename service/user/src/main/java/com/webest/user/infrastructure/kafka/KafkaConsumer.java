@@ -7,13 +7,15 @@ import com.webest.user.domain.model.vo.OrderProductDto;
 import com.webest.user.domain.model.vo.ProductDto;
 import com.webest.user.domain.model.vo.ShoppingCartDto;
 import com.webest.user.infrastructure.redis.RedisUtil;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 @Slf4j
@@ -26,10 +28,11 @@ public class KafkaConsumer {
     @KafkaListener(topics = "cart-topic")
     public void updateQty(String message) {
         log.info("cart-topic: " + message);
-        Map<Object,Object> map = new HashMap<>();
+        Map<Object, Object> map = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
-        try{
-            map = mapper.readValue(message,new TypeReference<Map<Object,Object>>(){});
+        try {
+            map = mapper.readValue(message, new TypeReference<Map<Object, Object>>() {
+            });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -41,7 +44,6 @@ public class KafkaConsumer {
         Map<String, Object> productDtoMap = (Map<String, Object>) map.get("productDto");
         ProductDto productDto = mapper.convertValue(productDtoMap, ProductDto.class);
 
-
         log.info(userId);
         log.info(storeId.toString());
         log.info(productDto.toString());
@@ -50,9 +52,10 @@ public class KafkaConsumer {
 
         // 현재 장바구니가 존재하지 않다면 장바구니 새로 생성
         // 장바구니에 담겨있는 제품의 가게의 정보와 새로 장바구니를 담을려는 가게의 정보가 다를경우 새로 덮어씌움
-        if((redisShopDto == null)|| !storeId.equals(redisShopDto.storeId())){
+        if ((redisShopDto == null) || !storeId.equals(redisShopDto.storeId())) {
             Set<OrderProductDto> orderList = new HashSet<>();
-            OrderProductDto orderProductDto = new OrderProductDto(productDto.id(),1,productDto.price());
+            OrderProductDto orderProductDto = new OrderProductDto(productDto.id(), 1,
+                productDto.price());
             orderList.add(orderProductDto);
             ShoppingCartDto shopDto = new ShoppingCartDto(userId, storeId, orderList);
             redisUtil.setDataShoppingCart(shopDto);
@@ -70,7 +73,8 @@ public class KafkaConsumer {
                     productExists = true; // 제품이 존재함
                     // 현재 장바구니에 저장된 제품의 수량을 증가시킴
                     int totalQuantity = dto.quantity() + 1; // 수량 증가
-                    updateDto = new OrderProductDto(dto.productId(), totalQuantity, dto.price()); // 새로운 객체 생성
+                    updateDto = new OrderProductDto(dto.productId(), totalQuantity,
+                        dto.price()); // 새로운 객체 생성
                     orderList.add(updateDto); // 변경된 객체 추가
                 } else {
                     // 기존의 제품을 그대로 추가
@@ -80,7 +84,8 @@ public class KafkaConsumer {
 
             // 만약 장바구니에 해당 제품이 없었다면 새로운 제품 추가
             if (!productExists) {
-                OrderProductDto newOrderProductDto = new OrderProductDto(productDto.id(), 1, productDto.price());
+                OrderProductDto newOrderProductDto = new OrderProductDto(productDto.id(), 1,
+                    productDto.price());
                 orderList.add(newOrderProductDto);
             }
 
