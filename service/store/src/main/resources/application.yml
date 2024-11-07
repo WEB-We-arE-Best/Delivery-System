@@ -28,7 +28,10 @@ spring:
       port: 6379
       username: default
       password: systempass
-
+    mongodb:
+      uri: ${MONGO_DB_URI}
+      authentication-database: ${MONGO_DB_AUTH}
+      auto-index-creation: true
 
 eureka:
   client:

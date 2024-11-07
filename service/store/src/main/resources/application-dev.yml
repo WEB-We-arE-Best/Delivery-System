@@ -25,6 +25,10 @@ spring:
       port: 6379
       username: ${DEV_REDIS_USERNAME}
       password: ${DEV_REDIS_PASSWORD}
+    mongodb:
+      uri: ${MONGO_DB_URI}
+      authentication-database: ${MONGO_DB_AUTH}
+      auto-index-creation: true
 
 
 eureka:
