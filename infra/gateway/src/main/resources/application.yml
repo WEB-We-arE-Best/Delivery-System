@@ -30,10 +30,12 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
-  redis:
-    data:
-      host: localhost
+  data:
+    redis:
+      host: ${DEV_REDIS_HOST}
       port: 6379
+      username: ${DEV_REDIS_USERNAME}
+      password: ${DEV_REDIS_PASSWORD}
 
 springdoc:
   enable-native-support: true

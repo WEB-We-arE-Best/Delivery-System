@@ -8,7 +8,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,11 +16,12 @@ spring:
         show_sql: true # sql 로깅
         format_sql: true # SQL 문 정렬하여 출력
         highlight_sql: true # SQL 문 색 부여
-  #        use_sql_comments: true # 콘솔에 표시되는 쿼리문 위에 어떤 실행을 하려는지 HINT 표시
-  redis:
-    data:
-      host: localhost
+  data:
+    redis:
+      host: ${DEV_REDIS_HOST}
       port: 6379
+      username: ${DEV_REDIS_USERNAME}
+      password: ${DEV_REDIS_PASSWORD}
 
 
 server:
