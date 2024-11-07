@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(CommonResponse.error(INVALID_INPUT.getStatus(),
-                "잘못 된 입력 데이터 입니다.", exception.getMessage()));
+                "잘못 된 바디 입력 데이터 입니다.", exception.getMessage()));
     }
 
     /**
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-        NoResourceFoundException.class, 
+        NoResourceFoundException.class,
         HttpRequestMethodNotSupportedException.class
     })
     public ResponseEntity<? extends CommonResponse<?>> handleNoResourceFoundException(
